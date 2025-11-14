@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JMS SQUAD - Elite Esports Team</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a0a0a;
+      color: #ffffff;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    /* Animated Background */
+    .bg-animated {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%);
+      z-index: -1;
+    }
+
+    .bg-animated::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(139, 0, 0, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: moveGrid 20s linear infinite;
+    }
+
+    .bg-animated::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 68, 68, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(139, 0, 0, 0.2) 0%, transparent 50%);
+      animation: floatingOrbs 15s ease-in-out infinite;
+    }
+
+    @keyframes moveGrid {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    @keyframes floatingOrbs {
+      0%, 100% { 
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+      }
+      33% { 
+        transform: translate(50px, -30px) scale(1.1);
+        opacity: 0.8;
+      }
+      66% { 
+        transform: translate(-30px, 40px) scale(0.9);
+        opacity: 0.7;
+      }
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 5%;
+      z-index: 1000;
+      border-bottom: 2px solid rgba(139, 0, 0, 0.3);
+      animation: slideDown 0.8s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    nav .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #8b0000, #ff4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #8b0000, #ff4444);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 60%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10rem 5% 3rem;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      font-size: 8rem;
+      margin-bottom: 1rem;
+      font-family: Impact, 'Arial Black', sans-serif;
+      background: linear-gradient(180deg, #ff0000 0%, #cc0000 30%, #990000 60%, #660000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: elegantGlow 3s ease-in-out infinite;
+      text-shadow: none;
+      letter-spacing: 0.15em;
+      filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4))
+              drop-shadow(0 0 20px rgba(204, 0, 0, 0.2));
+    }
+
+    @keyframes elegantGlow {
+      0%, 100% { 
+        filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4))
+                drop-shadow(0 0 20px rgba(204, 0, 0, 0.2));
+        transform: scale(1);
+      }
+      50% { 
+        filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.5))
+                drop-shadow(0 0 25px rgba(204, 0, 0, 0.3));
+        transform: scale(1.01);
+      }
+    }
+
+    .hero p {
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, #ff0000 0%, #ff3333 25%, #ff0000 50%, #cc0000 75%, #ff0000 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 2rem;
+      animation: fadeInUp 1s ease-out 0.3s both, shimmer 4s ease-in-out infinite;
+      display: block;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.3))
+              drop-shadow(0 0 15px rgba(204, 0, 0, 0.2));
+    }
+
+    @keyframes shimmer {
+      0%, 100% { 
+        background-position: 0% center;
+        filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.3))
+                drop-shadow(0 0 15px rgba(204, 0, 0, 0.2));
+      }
+      50% { 
+        background-position: 100% center;
+        filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.4))
+                drop-shadow(0 0 20px rgba(204, 0, 0, 0.3));
+      }
+    }
+
+    .cta-button {
+      display: none;
+    }
+
+    /* Section Styles */
+    section {
+      padding: 5rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      background: linear-gradient(135deg, #8b0000, #ff4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, #8b0000, #ff4444);
+      margin: 1rem auto;
+      border-radius: 2px;
+    }
+
+    /* About Section */
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .about-text {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #cccccc;
+    }
+
+    .about-image {
+      width: 100%;
+      height: 400px;
+      background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(255, 68, 68, 0.2));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      border: 2px solid rgba(139, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .about-image:hover {
+      transform: scale(1.05);
+      box-shadow: 0 20px 60px rgba(139, 0, 0, 0.4);
+    }
+
+    /* Video Section */
+    .video-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(139, 0, 0, 0.1);
+      border-radius: 20px;
+      padding: 3rem;
+      border: 2px solid rgba(139, 0, 0, 0.3);
+      animation: fadeIn 1s ease-out;
+    }
+
+    .video-placeholder {
+      width: 100%;
+      height: 700px;
+      background: linear-gradient(135deg, rgba(139, 0, 0, 0.3), rgba(255, 68, 68, 0.3));
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .video-placeholder:hover {
+      transform: scale(1.02);
+      box-shadow: 0 20px 60px rgba(139, 0, 0, 0.5);
+    }
+
+    .video-frame {
+      width: 100%;
+      height: 700px;
+      border-radius: 15px;
+      border: none;
+    }
+
+    /* Achievements Section */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .achievement-card {
+      background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(255, 68, 68, 0.1));
+      padding: 2.5rem;
+      border-radius: 15px;
+      text-align: center;
+      border: 2px solid rgba(139, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 60px rgba(139, 0, 0, 0.4);
+      border-color: #ff4444;
+    }
+
+    .achievement-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .achievement-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #ff4444;
+    }
+
+    .achievement-card p {
+      color: #cccccc;
+      font-size: 1.1rem;
+    }
+
+    /* Registration Section */
+    .registration-content {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(255, 68, 68, 0.1));
+      padding: 4rem;
+      border-radius: 20px;
+      border: 2px solid rgba(139, 0, 0, 0.3);
+      animation: fadeIn 1s ease-out;
+    }
+
+    .registration-content p {
+      font-size: 1.2rem;
+      color: #cccccc;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .registration-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: #ff4444;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(139, 0, 0, 0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #ff4444;
+      box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .submit-button {
+      padding: 1.2rem;
+      background: linear-gradient(135deg, #8b0000, #ff4444);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(139, 0, 0, 0.4);
+    }
+
+    .submit-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(139, 0, 0, 0.6);
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(10, 10, 10, 0.95);
+      padding: 3rem 5%;
+      text-align: center;
+      border-top: 2px solid rgba(139, 0, 0, 0.3);
+    }
+
+    footer p {
+      color: #cccccc;
+      font-size: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 3rem;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+      }
+
+      .about-content {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .video-placeholder {
+        height: 300px;
+      }
+
+      .video-frame {
+        height: 300px;
+      }
+
+      .registration-content {
+        padding: 2rem;
+      }
+    }
+
+    .success-message {
+      background: rgba(0, 139, 0, 0.2);
+      border: 2px solid rgba(0, 255, 0, 0.3);
+      padding: 1rem;
+      border-radius: 10px;
+      color: #00ff00;
+      margin-top: 1rem;
+      display: none;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="bg-animated"></div><!-- Fire Particles -->
+  <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden;"><!-- Fire particle 1 -->
+   <div style="position: absolute; width: 30px; height: 60px; background: linear-gradient(to top, #ff4444, #ff6600, transparent); border-radius: 50% 50% 0 0; bottom: -60px; left: 10%; animation: fireRise1 6s ease-in infinite; filter: blur(8px);"></div><!-- Fire particle 2 -->
+   <div style="position: absolute; width: 25px; height: 50px; background: linear-gradient(to top, #8b0000, #ff4444, transparent); border-radius: 50% 50% 0 0; bottom: -50px; left: 25%; animation: fireRise2 7s ease-in infinite 1s; filter: blur(6px);"></div><!-- Fire particle 3 -->
+   <div style="position: absolute; width: 35px; height: 70px; background: linear-gradient(to top, #ff4444, #ff8800, transparent); border-radius: 50% 50% 0 0; bottom: -70px; left: 45%; animation: fireRise3 8s ease-in infinite 2s; filter: blur(10px);"></div><!-- Fire particle 4 -->
+   <div style="position: absolute; width: 28px; height: 55px; background: linear-gradient(to top, #8b0000, #ff4444, transparent); border-radius: 50% 50% 0 0; bottom: -55px; left: 65%; animation: fireRise1 6.5s ease-in infinite 1.5s; filter: blur(7px);"></div><!-- Fire particle 5 -->
+   <div style="position: absolute; width: 32px; height: 65px; background: linear-gradient(to top, #ff4444, #ff6600, transparent); border-radius: 50% 50% 0 0; bottom: -65px; left: 80%; animation: fireRise2 7.5s ease-in infinite 0.5s; filter: blur(9px);"></div><!-- Fire particle 6 -->
+   <div style="position: absolute; width: 22px; height: 45px; background: linear-gradient(to top, #8b0000, #ff4444, transparent); border-radius: 50% 50% 0 0; bottom: -45px; left: 90%; animation: fireRise3 6s ease-in infinite 2.5s; filter: blur(5px);"></div><!-- Small embers -->
+   <div style="position: absolute; width: 8px; height: 8px; background: #ff6600; border-radius: 50%; bottom: 10%; left: 15%; animation: ember1 4s ease-in-out infinite; filter: blur(2px);"></div>
+   <div style="position: absolute; width: 6px; height: 6px; background: #ff4444; border-radius: 50%; bottom: 20%; left: 35%; animation: ember2 5s ease-in-out infinite 1s; filter: blur(2px);"></div>
+   <div style="position: absolute; width: 7px; height: 7px; background: #ff8800; border-radius: 50%; bottom: 15%; left: 55%; animation: ember1 4.5s ease-in-out infinite 2s; filter: blur(2px);"></div>
+   <div style="position: absolute; width: 9px; height: 9px; background: #ff4444; border-radius: 50%; bottom: 25%; left: 75%; animation: ember2 5.5s ease-in-out infinite 0.5s; filter: blur(2px);"></div>
+   <div style="position: absolute; width: 5px; height: 5px; background: #ff6600; border-radius: 50%; bottom: 18%; left: 88%; animation: ember1 4s ease-in-out infinite 1.5s; filter: blur(2px);"></div>
+  </div>
+  <style>
+    @keyframes fireRise1 {
+      0% { 
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translateY(-50vh) translateX(20px) scale(1.2);
+        opacity: 0.6;
+      }
+      100% { 
+        transform: translateY(-100vh) translateX(-10px) scale(0.5);
+        opacity: 0;
+      }
+    }
+    @keyframes fireRise2 {
+      0% { 
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateY(-50vh) translateX(-25px) scale(1.3);
+        opacity: 0.5;
+      }
+      100% { 
+        transform: translateY(-100vh) translateX(15px) scale(0.4);
+        opacity: 0;
+      }
+    }
+    @keyframes fireRise3 {
+      0% { 
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: translateY(-50vh) translateX(15px) scale(1.4);
+        opacity: 0.7;
+      }
+      100% { 
+        transform: translateY(-100vh) translateX(-20px) scale(0.3);
+        opacity: 0;
+      }
+    }
+    @keyframes ember1 {
+      0%, 100% { 
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.6;
+      }
+      50% { 
+        transform: translateY(-80px) translateX(30px) scale(1.5);
+        opacity: 1;
+      }
+    }
+    @keyframes ember2 {
+      0%, 100% { 
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.5;
+      }
+      50% { 
+        transform: translateY(-100px) translateX(-25px) scale(1.3);
+        opacity: 0.9;
+      }
+    }
+  </style>
+  <nav>
+   <div class="container">
+    <div class="logo" id="nav-logo">
+     JMS SQUAD
+    </div>
+    <ul class="nav-links">
+     <li><a href="#home">Home</a></li>
+     <li><a href="#video">Profile</a></li>
+     <li><a href="#about">About</a></li>
+     <li><a href="#achievements">Achievements</a></li>
+     <li><a href="#register">Register</a></li>
+    </ul>
+   </div>
+  </nav>
+  <section id="home" class="hero">
+   <div class="hero-content">
+    <h1 id="hero-title">JMS SQUAD</h1>
+    <p id="hero-tagline">Skuad Terkenal dan Siap Menguasai</p><a href="#register" class="cta-button">Join Our Team</a>
+   </div>
+  </section>
+  <section id="video">
+   <h2 class="section-title" id="video-title">Company Profile</h2>
+   <div class="video-container"><iframe class="video-frame" src="https://drive.google.com/file/d/1eT_fckMqWKzj2RB0Td9DeRHj6mHR4Jl3/preview" allow="autoplay" allowfullscreen> </iframe>
+    <p style="text-align: center; margin-top: 1.5rem; color: #cccccc;">Watch our journey to becoming champions</p>
+   </div>
+  </section>
+  <section id="about">
+   <h2 class="section-title" id="about-title">About JMS Squad</h2>
+   <div class="about-content">
+    <div class="about-text">
+     <p id="about-description">We are a professional esports team dedicated to excellence and competitive gaming. JMS Squad represents the pinnacle of teamwork, strategy, and skill in the esports arena. Our players are carefully selected and trained to compete at the highest levels across multiple gaming titles. With a focus on continuous improvement and innovation, we strive to dominate every tournament we enter.</p>
+    </div>
+    <div class="about-image">
+     🎮
+    </div>
+   </div>
+  </section>
+  <section id="achievements">
+   <h2 class="section-title" id="achievements-title">Our Achievements</h2>
+   <div class="achievements-grid">
+    <div class="achievement-card">
+     <div class="achievement-icon">
+      🏆
+     </div>
+     <h3>Championship Winner</h3>
+     <p>Regional Tournament 2024</p>
+    </div>
+    <div class="achievement-card">
+     <div class="achievement-icon">
+      🥇
+     </div>
+     <h3>First Place</h3>
+     <p>National Esports League</p>
+    </div>
+    <div class="achievement-card">
+     <div class="achievement-icon">
+      ⭐
+     </div>
+     <h3>MVP Award</h3>
+     <p>Best Team Performance</p>
+    </div>
+    <div class="achievement-card">
+     <div class="achievement-icon">
+      🎯
+     </div>
+     <h3>Undefeated Streak</h3>
+     <p>15 Consecutive Wins</p>
+    </div>
+   </div>
+  </section>
+  <section id="register">
+   <h2 class="section-title" id="registration-title">Join Our Squad</h2>
+   <div class="registration-content">
+    <p id="registration-description">Ready to compete at the highest level? Join JMS Squad and become part of our elite team. Fill out the form below and take the first step towards esports glory.</p>
+    <form class="registration-form" id="registrationForm">
+     <div class="form-group"><label for="name">Full Name</label> <input type="text" id="name" name="name" required>
+     </div>
+     <div class="form-group"><label for="email">Email Address</label> <input type="email" id="email" name="email" required>
+     </div>
+     <div class="form-group"><label for="game">Main Game</label> <input type="text" id="game" name="game" placeholder="e.g., Mobile Legends, PUBG, Valorant" required>
+     </div>
+     <div class="form-group"><label for="experience">Gaming Experience</label> <textarea id="experience" name="experience" placeholder="Tell us about your gaming background and achievements" required></textarea>
+     </div><button type="submit" class="submit-button">Submit Application</button>
+     <div class="success-message" id="successMessage">
+      ✅ Application submitted successfully! We'll contact you soon.
+     </div>
+    </form>
+   </div>
+  </section>
+  <footer>
+   <p>© 2024 JMS Squad. All rights reserved. Dominate. Conquer. Win.</p>
+  </footer>
+  <script>
+    const defaultConfig = {
+      team_name: "JMS SQUAD",
+      hero_tagline: "Skuad Terkenal dan Siap Menguasai",
+      about_title: "About JMS Squad",
+      about_description: "We are a professional esports team dedicated to excellence and competitive gaming. JMS Squad represents the pinnacle of teamwork, strategy, and skill in the esports arena. Our players are carefully selected and trained to compete at the highest levels across multiple gaming titles. With a focus on continuous improvement and innovation, we strive to dominate every tournament we enter.",
+      video_title: "Company Profile",
+      achievements_title: "Our Achievements",
+      registration_title: "Join Our Squad",
+      registration_description: "Ready to compete at the highest level? Join JMS Squad and become part of our elite team. Fill out the form below and take the first step towards esports glory.",
+      background_color: "#0a0a0a",
+      primary_color: "#8b0000",
+      accent_color: "#ff4444",
+      text_color: "#ffffff",
+      secondary_text_color: "#cccccc"
+    };
+
+    async function onConfigChange(config) {
+      const teamName = config.team_name || defaultConfig.team_name;
+      const heroTagline = config.hero_tagline || defaultConfig.hero_tagline;
+      const aboutTitle = config.about_title || defaultConfig.about_title;
+      const aboutDescription = config.about_description || defaultConfig.about_description;
+      const videoTitle = config.video_title || defaultConfig.video_title;
+      const achievementsTitle = config.achievements_title || defaultConfig.achievements_title;
+      const registrationTitle = config.registration_title || defaultConfig.registration_title;
+      const registrationDescription = config.registration_description || defaultConfig.registration_description;
+
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const accentColor = config.accent_color || defaultConfig.accent_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const secondaryTextColor = config.secondary_text_color || defaultConfig.secondary_text_color;
+
+      document.getElementById('nav-logo').textContent = teamName;
+      document.getElementById('hero-title').textContent = teamName;
+      document.getElementById('hero-tagline').textContent = heroTagline;
+      document.getElementById('about-title').textContent = aboutTitle;
+      document.getElementById('about-description').textContent = aboutDescription;
+      document.getElementById('video-title').textContent = videoTitle;
+      document.getElementById('achievements-title').textContent = achievementsTitle;
+      document.getElementById('registration-title').textContent = registrationTitle;
+      document.getElementById('registration-description').textContent = registrationDescription;
+
+      document.body.style.background = backgroundColor;
+      document.body.style.color = textColor;
+
+      const bgAnimated = document.querySelector('.bg-animated');
+      bgAnimated.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${primaryColor}22 50%, ${backgroundColor} 100%)`;
+
+      const allText = document.querySelectorAll('p, .about-text, .achievement-card p, footer p');
+      allText.forEach(el => {
+        el.style.color = secondaryTextColor;
+      });
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              if (window.elementSdk) {
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              if (window.elementSdk) {
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => {
+              config.accent_color = value;
+              if (window.elementSdk) {
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              if (window.elementSdk) {
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.secondary_text_color || defaultConfig.secondary_text_color,
+            set: (value) => {
+              config.secondary_text_color = value;
+              if (window.elementSdk) {
+                window.elementSdk.setConfig({ secondary_text_color: value });
+              }
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["team_name", config.team_name || defaultConfig.team_name],
+        ["hero_tagline", config.hero_tagline || defaultConfig.hero_tagline],
+        ["about_title", config.about_title || defaultConfig.about_title],
+        ["about_description", config.about_description || defaultConfig.about_description],
+        ["video_title", config.video_title || defaultConfig.video_title],
+        ["achievements_title", config.achievements_title || defaultConfig.achievements_title],
+        ["registration_title", config.registration_title || defaultConfig.registration_title],
+        ["registration_description", config.registration_description || defaultConfig.registration_description]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    // Form submission handler
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const successMessage = document.getElementById('successMessage');
+      successMessage.style.display = 'block';
+      
+      this.reset();
+      
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 5000);
+    });
+
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e233c226d7ebfc',t:'MTc2MzA3ODE0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
